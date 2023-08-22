@@ -1,15 +1,21 @@
-import { StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { Routes } from './routes';
 
 export default function Root() {
-  return <Routes />;
-}
+  const [userChecked, setUserChecked] = useState(false);
+  const [userLogged, setUserLogged] = useState(false);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  useEffect(() => {
+    (async () => {
+      const username = await AsyncStorage.getItem('@Githuber:username');
+
+      setUserChecked(true);
+      setUserLogged(!!username);
+    })();
+  }, [userLogged]);
+
+  if (!userChecked) return null;
+
+  return <Routes userLogged={userLogged} />;
+}
